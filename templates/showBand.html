@@ -1,0 +1,39 @@
+<html>
+
+<body>
+
+<h1>{{b.name}}</h1>
+<a href="{{url_for('newAlbum',id=b.id)}}">Add a New Album</a>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+<ul>
+{% for message in messages %}
+  <li><strong>{{message}}</strong></li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+
+{% for a in albums %}
+
+<div>
+
+<a href="{{url_for('showAlbum',id=a.id)}}">{{a.name}}</a>
+
+<img src="{{a.artwork}}" alt="{{a.name}}" width = "300px">
+
+<br/>
+
+<a href="{{url_for('editBand',id=a.id)}}">Edit</a>
+<a href="{{url_for('deleteBand',id=a.id)}}">Delete</a>
+
+</div>
+
+
+{% endfor %}
+</body>
+
+</html>
