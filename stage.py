@@ -38,15 +38,25 @@ def showBand(id):
 	band = session.query(Band).filter_by(id=id).one()
 	albums = session.query(Album).filter_by(band_id=id).all()
 	return render_template('showBand.html',b=band,albums=albums)
+
+@app.route('/bands/<int:band_id>/<int:alb_id>')
+def showAlbum(band_id,alb_id):
+	session = DBSession()
+	band = session.query(Band).filter_by(id=band_id).one()
+	album = session.query(Album).filter_by(id=alb_id).one()
+	return render_template('showAlbum.html',b=band,a=album)
+
 @app.route('/bands/<int:id>/edit', methods = ['GET','POST'])
 def editBand(id):
 	session = DBSession()
 	editBand = session.query(Band).filter_by(id=id).one()
 	if request.method == 'POST':
-		name = request.form['name']
-		photo = request.form['photo']
-		editBand.name = name
-		editBand.photo = photo
+		name = request.form.get('name')
+		photo = request.form.get('photo')
+		if name:
+			editBand.name = name
+		if photo:
+			editBand.photo = photo
 		session.add(editBand)
 		session.commit()
 		return redirect(url_for('index'))
@@ -55,10 +65,11 @@ def editBand(id):
 
 @app.route('/bands/<int:id>/delete', methods = ['GET','POST'])
 def deleteBand(id):
-	######### CURRENTLY DOESN'T DELETE ALBUMS FROM THE DATABASE #########
 	session = DBSession()
 	delBand = session.query(Band).filter_by(id=id).one()
 	if request.method == 'POST':
+		delAlbum = session.query(Album).filter_by(band_id=id).all()
+		map(lambda d: session.delete(d), delAlbum)
 		session.delete(delBand)
 		session.commit()
 		return redirect(url_for('index'))
@@ -67,15 +78,52 @@ def deleteBand(id):
 
 @app.route('/bands/<int:id>/new', methods = ['GET','POST'])
 def newAlbum(id):
-	pass
+	session = DBSession()
+	if request.method == 'POST':
+		name = request.form['name']
+		artwork = request.form['artwork']
+		fav_song = request.form['fav_song']
+		year = request.form['year']		
+		newAlbum = Album(name=name, artwork=artwork, fav_song=fav_song, year=year, band_id=id) 
+		session.add(newAlbum)
+		session.commit()
+		return redirect(url_for('showBand',id=id))
+	else:
+		return render_template('newAlbum.html',band_id=id)
 
-@app.route('/bands/<int:id>/<int:alb_id>/edit', methods = ['GET','POST'])
-def editAlbum():
-	pass
+@app.route('/bands/<int:band_id>/<int:alb_id>/edit', methods = ['GET','POST'])
+def editAlbum(band_id,alb_id):
+	session = DBSession()
+	editAlbum = session.query(Album).filter_by(id=alb_id).one()
+	if request.method == 'POST':
+		name = request.form.get('name')
+		artwork = request.form.get('artwork')
+		fav_song = request.form.get('fav_song')
+		year = request.form.get('year')
+		if name:
+			editAlbum.name = name
+		if artwork:
+			editAlbum.artwork = artwork
+		if fav_song:
+			editAlbum.fav_song = fav_song
+		if year:
+			editAlbum.year = year		
+		session.add(editAlbum)
+		session.commit()
+		return redirect(url_for('showAlbum',band_id=band_id,alb_id=alb_id))
+	else:
+		return render_template('editAlbum.html',a=editAlbum,band_id=band_id)
 
-@app.route('/bands/<int:id>/<int:alb_id>/delete', methods = ['GET','DELETE'])
-def deleteAlbum():
-	pass
+@app.route('/bands/<int:band_id>/<int:alb_id>/delete', methods = ['GET','POST'])
+def deleteAlbum(band_id,alb_id):
+	session = DBSession()
+	delAlbum = session.query(Album).filter_by(id=alb_id).one()
+	if request.method == 'POST':
+		session.delete(delAlbum)
+		session.commit()
+		return redirect(url_for('showBand',id=band_id))
+	else:
+		return render_template('deleteAlbum.html',band_id=band_id,a=delAlbum)
 
 if __name__ == '__main__':
 	app.debug = True

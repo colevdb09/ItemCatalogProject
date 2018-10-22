@@ -4,6 +4,8 @@
 
 <h1>{{b.name}}</h1>
 <a href="{{url_for('newAlbum',id=b.id)}}">Add a New Album</a>
+<br/>
+<br/>
 
 {% with messages = get_flashed_messages() %}
 {% if messages %}
@@ -21,14 +23,17 @@
 
 <div>
 
-<a href="{{url_for('showAlbum',id=a.id)}}">{{a.name}}</a>
+<a href="{{url_for('showAlbum',band_id=b.id,alb_id=a.id)}}">{{a.name}}</a><br/>
 
 <img src="{{a.artwork}}" alt="{{a.name}}" width = "300px">
 
 <br/>
 
-<a href="{{url_for('editBand',id=a.id)}}">Edit</a>
-<a href="{{url_for('deleteBand',id=a.id)}}">Delete</a>
+<a href="{{url_for('editAlbum',band_id=b.id,alb_id=a.id)}}">Edit</a>
+<a href="{{url_for('deleteAlbum',band_id=b.id,alb_id=a.id)}}">Delete</a>
+
+<br/>
+<br/>
 
 </div>
 

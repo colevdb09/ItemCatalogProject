@@ -1,0 +1,34 @@
+<html>
+<body>
+<h1> New Album </h1>
+
+<form action="{{url_for('newAlbum',id=band_id)}}" method = 'POST'>
+
+<p>Album Name:</p>
+
+<input type='text' size='30' name='name'>
+
+<br/>
+
+<p>Artwork:</p>
+
+<input type='text' size='50' name='artwork'>
+
+<br/>
+
+<p>Favorite Song:</p>
+
+<input type='text' size='30' name='fav_song'>
+
+<br/>
+
+<p>Release Year:</p>
+
+<input type='text' size='4' name='year'>
+
+<input type='submit' value='Add New Album'>
+
+</form>
+
+</body>
+</html>
