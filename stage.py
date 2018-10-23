@@ -12,6 +12,99 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 
+from flask import session as login_session
+import random, string
+
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
+import httplib2
+import json
+from flask import make_response
+import requests
+
+
+CLIENT_ID = json.loads(
+		open('client_secrets.json', 'r').read())['web']['client_id']
+APPLICATION_NAME = 'Item Catalog Project'
+
+@app.route('/gconnect', methods=['POST'])
+def gconnect():
+	if request.args.get('state') != login_session['state']:
+		response = make_response(json.dumps('Invalid State Parameter'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+
+	code = request.data
+
+	try:
+		oauth_flow = flow_from_clientsecrets('client_secrets.json',scope='')
+		oauth_flow.redirect_uri = 'postmessage'
+		credentials = oauth_flow.step2_exchange(code)
+	except FlowExchangeError:
+		response = make_response(json.dumps('Could not retrieve token from authorization code'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+
+	access_token = credentials.access_token
+	url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % access_token)
+	h = httplib2.Http()
+
+	verified_token = json.loads(h.request(url,'GET')[1])
+
+	if verified_token.get('error') is not None:
+		response = make_response(json.dumps(verified_token.get('error')), 500)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+
+	gplus_id = credentials.id_token['sub']
+	if verified_token['user_id'] != gplus_id:
+		response = make_response(json.dumps('User ID of token does not match requestor ID'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+
+	if verified_token['issued_to'] != CLIENT_ID:
+		response = make_response(json.dumps('Issued to ID of the token does not match the application CLIENT ID'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+
+	stored_credentials = login_session.get('credentials')
+	stored_gplus_id = login_session.get('gplus_id')
+
+	if stored_credentials is not None and stored_gplus_id == gplus_id:
+		response = make_response(json.dumps('Current user is already logged in'), 201)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+
+	login_session['gplus_id'] = gplus_id
+	login_session['access_token'] = credentials.access_token
+	
+	userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+	params = {'access_token': credentials.access_token, 'alt': 'json'}
+	data = requests.get(userinfo_url, params=params)
+	userinfo = data.json()
+
+	login_session['username'] = userinfo['name']
+	login_session['picture'] = userinfo['picture']
+	login_session['email'] = userinfo['email']
+
+	output = ''
+	output += '<h1>Welcome, '
+	output += login_session['username']
+	output += '!</h1>'
+	output += '<img src="'
+	output += login_session['picture']
+	output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+	flash("you are now logged in as %s" % login_session['username'])
+	return output
+
+@app.route('/login')
+def showlogin():
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits) 
+		for x in xrange(32))
+	login_session['state'] = state
+
+	return render_template('login.html', STATE = state)
+
 @app.route('/')
 @app.route('/bands')
 def index():
@@ -126,5 +219,6 @@ def deleteAlbum(band_id,alb_id):
 		return render_template('deleteAlbum.html',band_id=band_id,a=delAlbum)
 
 if __name__ == '__main__':
+	app.secret_key = 'a_secret_key'
 	app.debug = True
 	app.run(host = '0.0.0.0', port = 8080)
