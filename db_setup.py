@@ -11,8 +11,10 @@ class User(Base):
 	
     __tablename__ = 'user'
 
+    name = Column(String(32), index=True)
     id = Column(Integer, primary_key=True)
-    username = Column(String(32), index=True)
+    email = Column(String(100), nullable=False)
+    picture = Column(String(250))
     password_hash = Column(String(64))
 
     def hash_password(self, password):

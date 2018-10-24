@@ -87,6 +87,11 @@ def gconnect():
 	login_session['picture'] = userinfo['picture']
 	login_session['email'] = userinfo['email']
 
+	user_id = getUserId(login_session['email'])
+	if user_id is None:
+		user_id = createUser(login_session)
+	login_session['user_id'] = user_id
+
 	output = ''
 	output += '<h1>Welcome, '
 	output += login_session['username']
@@ -101,7 +106,7 @@ def gconnect():
 def gdisconnect():
 	token = login_session.get('access_token')
 	if token is None:
-		response = make_response(json.dumps('You are not currently logged in'), 401)
+		response = make_response(json.dumps('You are not currently logged in.'), 401)
 		response.headers['Content-Type'] = 'application/json'
 		return response
 	h = httplib2.Http()
@@ -123,6 +128,23 @@ def gdisconnect():
 		response.headers['Content-Type'] = 'application/json'
 		return response
 
+def getUserId(email):
+	try:
+		session = DBSession()
+		user = session.query(User).filter_by(email=email).one()
+		return user.id
+	except:
+		return None
+
+def createUser(login_session):
+	session = DBSession()
+	newUser = User(name=login_session['username'], email=login_session['email'], picture=login_session['picture'])
+	session.add(newUser)
+	session.commit()
+	user = session.query(User).filter_by(email = login_session['email']).one()
+	return user.id
+
+
 @app.route('/login')
 def showlogin():
 	state = ''.join(random.choice(string.ascii_uppercase + string.digits) 
@@ -136,7 +158,10 @@ def showlogin():
 def index():
 	session = DBSession()
 	bands = session.query(Band).all()
-	return render_template('bands.html',bands=bands)
+	if 'username' not in login_session:
+		return render_template('publicbands.html',bands=bands)
+	else:
+		return render_template('bands.html',bands=bands)
 
 @app.route('/bands/new', methods = ['GET','POST'])
 def newBand():
@@ -144,7 +169,7 @@ def newBand():
 	if request.method == 'POST':
 		name = request.form['name']
 		photo = request.form['photo']
-		newBand = Band(name=name, photo=photo)
+		newBand = Band(name=name, photo=photo, user_id=login_session['user_id'])
 		session.add(newBand)
 		session.commit()
 		return redirect(url_for('index'))
