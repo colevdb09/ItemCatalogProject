@@ -97,6 +97,32 @@ def gconnect():
 	flash("you are now logged in as %s" % login_session['username'])
 	return output
 
+@app.route('/gdisconnect')
+def gdisconnect():
+	token = login_session.get('access_token')
+	if token is None:
+		response = make_response(json.dumps('You are not currently logged in'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+	h = httplib2.Http()
+	url_disc = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % token
+	res = h.request(url_disc,'GET')[0]
+
+	if res['status'] == '200':
+		del login_session['access_token']
+		del login_session['gplus_id']		
+		del login_session['username']
+		del login_session['email']
+		del login_session['picture']
+		#del login_session['user_id']		
+		flash("You have successfully been logged out.")
+
+		return redirect(url_for('index'))
+	else:
+		response = make_response(json.dumps('Failed to revoke token from OAuth Server'),400)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+
 @app.route('/login')
 def showlogin():
 	state = ''.join(random.choice(string.ascii_uppercase + string.digits) 
