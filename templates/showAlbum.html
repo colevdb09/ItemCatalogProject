@@ -2,9 +2,11 @@
 
 <body>
 
+<a href="{{url_for('index')}}">View All Bands</a>
+
 <h1>{{a.name}}</h1>
 
-<p>by {{b.name}}</p><br/>
+<p>by <a href="{{url_for('showBand',id=b.id)}}">{{b.name}}</a></p><br/>
 
 <div>
 

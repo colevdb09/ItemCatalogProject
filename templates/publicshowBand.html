@@ -5,7 +5,6 @@
 <a href="{{url_for('index')}}">View All Bands</a>
 
 <h1>{{b.name}}</h1>
-<a href="{{url_for('newAlbum',id=b.id)}}">Add a New Album</a>
 <br/>
 <br/>
 
@@ -29,10 +28,6 @@
 
 <img src="{{a.artwork}}" alt="{{a.name}}" width = "300px">
 
-<br/>
-
-<a href="{{url_for('editAlbum',band_id=b.id,alb_id=a.id)}}">Edit</a>
-<a href="{{url_for('deleteAlbum',band_id=b.id,alb_id=a.id)}}">Delete</a>
 
 <br/>
 <br/>

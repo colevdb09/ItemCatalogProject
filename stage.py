@@ -119,7 +119,7 @@ def gdisconnect():
 		del login_session['username']
 		del login_session['email']
 		del login_session['picture']
-		#del login_session['user_id']		
+		del login_session['user_id']		
 		flash("You have successfully been logged out.")
 
 		return redirect(url_for('index'))
@@ -161,10 +161,12 @@ def index():
 	if 'username' not in login_session:
 		return render_template('publicbands.html',bands=bands)
 	else:
-		return render_template('bands.html',bands=bands)
+		return render_template('bands.html',bands=bands,user_id=login_session['user_id'])
 
 @app.route('/bands/new', methods = ['GET','POST'])
 def newBand():
+	if 'username' not in login_session:
+		return redirect('/login')
 	session = DBSession()
 	if request.method == 'POST':
 		name = request.form['name']
@@ -181,7 +183,10 @@ def showBand(id):
 	session = DBSession()
 	band = session.query(Band).filter_by(id=id).one()
 	albums = session.query(Album).filter_by(band_id=id).all()
-	return render_template('showBand.html',b=band,albums=albums)
+	if band.user_id == login_session.get('user_id'):
+		return render_template('showBand.html',b=band,albums=albums)
+	else:
+		return render_template('publicshowBand.html',b=band,albums=albums)
 
 @app.route('/bands/<int:band_id>/<int:alb_id>')
 def showAlbum(band_id,alb_id):
@@ -192,6 +197,8 @@ def showAlbum(band_id,alb_id):
 
 @app.route('/bands/<int:id>/edit', methods = ['GET','POST'])
 def editBand(id):
+	if 'username' not in login_session:
+		return redirect('/login')
 	session = DBSession()
 	editBand = session.query(Band).filter_by(id=id).one()
 	if request.method == 'POST':
@@ -209,6 +216,8 @@ def editBand(id):
 
 @app.route('/bands/<int:id>/delete', methods = ['GET','POST'])
 def deleteBand(id):
+	if 'username' not in login_session:
+		return redirect('/login')
 	session = DBSession()
 	delBand = session.query(Band).filter_by(id=id).one()
 	if request.method == 'POST':
@@ -222,6 +231,8 @@ def deleteBand(id):
 
 @app.route('/bands/<int:id>/new', methods = ['GET','POST'])
 def newAlbum(id):
+	if 'username' not in login_session:
+		return redirect('/login')
 	session = DBSession()
 	if request.method == 'POST':
 		name = request.form['name']
@@ -237,6 +248,8 @@ def newAlbum(id):
 
 @app.route('/bands/<int:band_id>/<int:alb_id>/edit', methods = ['GET','POST'])
 def editAlbum(band_id,alb_id):
+	if 'username' not in login_session:
+		return redirect('/login')
 	session = DBSession()
 	editAlbum = session.query(Album).filter_by(id=alb_id).one()
 	if request.method == 'POST':
@@ -260,6 +273,8 @@ def editAlbum(band_id,alb_id):
 
 @app.route('/bands/<int:band_id>/<int:alb_id>/delete', methods = ['GET','POST'])
 def deleteAlbum(band_id,alb_id):
+	if 'username' not in login_session:
+		return redirect('/login')
 	session = DBSession()
 	delAlbum = session.query(Album).filter_by(id=alb_id).one()
 	if request.method == 'POST':

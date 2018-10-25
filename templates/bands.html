@@ -29,9 +29,11 @@
 <img src="{{b.photo}}" alt="{{b.name}}" width = "300px">
 
 <br/>
-
+{% if b.user_id == user_id %}
 <a href="{{url_for('editBand',id=b.id)}}">Edit</a>
 <a href="{{url_for('deleteBand',id=b.id)}}">Delete</a>
+{% endif %}
+
 
 <br/>
 <br/>
