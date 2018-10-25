@@ -63,7 +63,7 @@ class Album(Base):
 			'artwork':self.artwork,
 			'fav_song':self.fav_song,
 			'year':self.year,
-			'band':self.band,
+			'band':self.band_id,
 			'user':self.user_id
 		}
 

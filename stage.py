@@ -163,6 +163,11 @@ def index():
 	else:
 		return render_template('bands.html',bands=bands,user_id=login_session['user_id'])
 
+@app.route('/bands/JSON')
+def indexJSON():
+	session = DBSession()
+	bands = session.query(Band).all()
+	return jsonify(Band = [b.serialize for b in bands])
 
 @app.route('/bands/new', methods = ['GET','POST'])
 def newBand():
@@ -189,6 +194,12 @@ def showBand(id):
 	else:
 		return render_template('publicshowBand.html',b=band,albums=albums)
 
+@app.route('/bands/<int:id>/JSON')
+def showBandJSON(id):
+	session = DBSession()
+	band = session.query(Band).filter_by(id=id).one()
+	albums = session.query(Album).filter_by(band_id=id).all()
+	return jsonify(Album = [a.serialize for a in albums])
 
 @app.route('/bands/<int:band_id>/<int:alb_id>')
 def showAlbum(band_id,alb_id):
@@ -196,6 +207,13 @@ def showAlbum(band_id,alb_id):
 	band = session.query(Band).filter_by(id=band_id).one()
 	album = session.query(Album).filter_by(id=alb_id).one()
 	return render_template('showAlbum.html',b=band,a=album)
+
+@app.route('/bands/<int:band_id>/<int:alb_id>/JSON')
+def showAlbumJSON(band_id,alb_id):
+	session = DBSession()
+	band = session.query(Band).filter_by(id=band_id).one()
+	album = session.query(Album).filter_by(id=alb_id).one()
+	return jsonify(Album = album.serialize)
 
 @app.route('/bands/<int:id>/edit', methods = ['GET','POST'])
 def editBand(id):
