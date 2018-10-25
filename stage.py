@@ -163,6 +163,7 @@ def index():
 	else:
 		return render_template('bands.html',bands=bands,user_id=login_session['user_id'])
 
+
 @app.route('/bands/new', methods = ['GET','POST'])
 def newBand():
 	if 'username' not in login_session:
@@ -183,10 +184,11 @@ def showBand(id):
 	session = DBSession()
 	band = session.query(Band).filter_by(id=id).one()
 	albums = session.query(Album).filter_by(band_id=id).all()
-	if band.user_id == login_session.get('user_id'):
-		return render_template('showBand.html',b=band,albums=albums)
+	if 'username' in login_session:
+		return render_template('showBand.html',b=band,albums=albums,user_id=login_session['user_id'])
 	else:
 		return render_template('publicshowBand.html',b=band,albums=albums)
+
 
 @app.route('/bands/<int:band_id>/<int:alb_id>')
 def showAlbum(band_id,alb_id):
@@ -238,8 +240,9 @@ def newAlbum(id):
 		name = request.form['name']
 		artwork = request.form['artwork']
 		fav_song = request.form['fav_song']
-		year = request.form['year']		
-		newAlbum = Album(name=name, artwork=artwork, fav_song=fav_song, year=year, band_id=id) 
+		year = request.form['year']
+		user = login_session['user_id']	
+		newAlbum = Album(name=name, artwork=artwork, fav_song=fav_song, year=year, band_id=id, user_id=user) 
 		session.add(newAlbum)
 		session.commit()
 		return redirect(url_for('showBand',id=id))

@@ -31,8 +31,12 @@
 
 <br/>
 
+{% if a.user_id == user_id %}
+
 <a href="{{url_for('editAlbum',band_id=b.id,alb_id=a.id)}}">Edit</a>
 <a href="{{url_for('deleteAlbum',band_id=b.id,alb_id=a.id)}}">Delete</a>
+
+{% endif %}
 
 <br/>
 <br/>
