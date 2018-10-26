@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
 app = Flask(__name__)
 
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine, asc, func, desc
 from sqlalchemy.orm import sessionmaker
 from db_setup import Base, Band, Album, User
 
@@ -161,7 +161,18 @@ def index():
 	if 'username' not in login_session:
 		return render_template('publicbands.html',bands=bands)
 	else:
-		return render_template('bands.html',bands=bands,user_id=login_session['user_id'])
+		pop_year = session.query(
+			Album.year, func.count(Album.id).label('num')
+			).filter_by(user_id=login_session['user_id']
+			).group_by(Album.year
+			).order_by(desc('num')).first()
+		if pop_year is None:
+			head = "Add an album to see most popular year"
+			my_albums = None
+		else:
+			head = "My most common album year is %s" % pop_year[0]
+			my_albums = session.query(Album).filter_by(user_id=login_session['user_id'],year=pop_year[0]).all()
+		return render_template('bands.html',bands=bands,user_id=login_session['user_id'],my_albums=my_albums,head=head)
 
 @app.route('/bands/JSON')
 def indexJSON():
@@ -188,11 +199,12 @@ def newBand():
 def showBand(id):
 	session = DBSession()
 	band = session.query(Band).filter_by(id=id).one()
+	creator = session.query(User).filter_by(id=band.user_id).one()
 	albums = session.query(Album).filter_by(band_id=id).all()
 	if 'username' in login_session:
-		return render_template('showBand.html',b=band,albums=albums,user_id=login_session['user_id'])
+		return render_template('showBand.html',b=band,albums=albums,user_id=login_session['user_id'],creator=creator)
 	else:
-		return render_template('publicshowBand.html',b=band,albums=albums)
+		return render_template('publicshowBand.html',b=band,albums=albums,creator=creator)
 
 @app.route('/bands/<int:id>/JSON')
 def showBandJSON(id):
@@ -206,7 +218,9 @@ def showAlbum(band_id,alb_id):
 	session = DBSession()
 	band = session.query(Band).filter_by(id=band_id).one()
 	album = session.query(Album).filter_by(id=alb_id).one()
-	return render_template('showAlbum.html',b=band,a=album)
+	creator = session.query(User).filter_by(id=album.user_id).one()
+
+	return render_template('showAlbum.html',b=band,a=album,creator=creator)
 
 @app.route('/bands/<int:band_id>/<int:alb_id>/JSON')
 def showAlbumJSON(band_id,alb_id):

@@ -4,6 +4,23 @@
 
 <a href="{{url_for('gdisconnect')}}">Log Out</a>
 
+<h2>{{head}}</h2>
+<br/>
+
+
+{% if my_albums %}
+
+{% for m in my_albums %}
+	
+	<a href="{{url_for('showAlbum',alb_id=m.id,band_id=m.band_id)}}">
+		<img src="{{m.artwork}}" alt="{{m.name}}" width = "100px">
+	</a>
+
+{% endfor %}
+
+{% endif %}
+
+
 <h1>Bands</h1>
 
 <a href="{{url_for('newBand')}}">Add a New Band</a>
