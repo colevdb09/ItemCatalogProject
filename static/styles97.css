@@ -13,7 +13,6 @@ a9d4e7
 }
 
 body {
-	/*font-family: "Helvetica Neue Bold", Roboto, Helvetica, Arial, sans-serif;*/
 	font-family: 'exc';
 	font-weight: 700;
 	color: #D39741;
@@ -37,7 +36,8 @@ body {
 .btn:hover {
 	border-color: #2d7d9f;
   	padding: 5px 9px 5px 9px;
-  	margin: 0px;	
+  	margin: 0px;
+  	background-color: #f2f3f1;	
 
 }
 
@@ -116,6 +116,47 @@ ul {
 .bands {
 	text-align: center;
 	height: 100%;
+}
+
+.band {
+	text-decoration: none;
+  	padding: 2px 6px 2px 6px;
+  	margin: 3px;
+  	border-top: 3px solid #a9d4e7;
+  	border-left: 3px solid #a9d4e7;
+  	border-right: 3px solid #a9d4e7;
+	border-top-right-radius: 20px;
+	border-top-left-radius: 20px;
+	color: #e4c977;
+	font-size: 20px;
+}
+
+.band:hover {
+	border-color: #2d7d9f;
+  	padding: 5px 9px 5px 9px;
+  	margin: 0px;
+  	background-color: #f2f3f1;
+
+}
+
+.edit-del {
+	text-decoration: none;
+  	padding: 0px 6px 2px 6px;	
+  	margin: 3px;
+  	border-bottom: 3px solid #a9d4e7;
+  	border-right: 3px solid #a9d4e7;
+  	border-left: 3px solid #a9d4e7;
+	border-bottom-left-radius: 20px;
+	border-bottom-right-radius: 20px;
+	color: #e4c977;
+	font-size: 20px;
+}
+
+.edit-del:hover {
+	border-color: #2d7d9f;
+  	padding: 0px 9px 5px 9px;
+  	margin: 0px;
+  	background-color: #f2f3f1;
 }
 
 .item {

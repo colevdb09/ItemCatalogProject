@@ -1,7 +1,7 @@
 <html>
 <head>
 	<!--Link to CSS stylesheet-->
-	<link rel = "stylesheet" type = "text/css" href = "{{url_for('static',filename='styles78.css')}}">
+	<link rel = "stylesheet" type = "text/css" href = "{{url_for('static',filename='styles97.css')}}">
 </head>
 
 <body>
@@ -60,15 +60,14 @@
 					{% for b in bands %}
 					<div class='item'>
 						<br/>
-						<a href="{{url_for('showBand',id=b.id)}}">{{b.name}}</a>
+						<a class='band' href="{{url_for('showBand',id=b.id)}}">{{b.name}}</a>
 						<br/>
 						<div class='frame'>
 							<img src="{{b.photo}}" alt="{{b.name}}" width = "200px">
 						</div>
-						<br/>
 						{% if b.user_id == user_id %}
-						<a href="{{url_for('editBand',id=b.id)}}">Edit</a>
-						<a href="{{url_for('deleteBand',id=b.id)}}">Delete</a>
+						<a class='edit-del' href="{{url_for('editBand',id=b.id)}}">Edit</a>
+						<a class='edit-del' href="{{url_for('deleteBand',id=b.id)}}">Delete</a>
 						{% endif %}
 					</div>
 
