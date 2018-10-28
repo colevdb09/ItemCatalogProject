@@ -1,41 +1,62 @@
 <html>
 
+<head>
+	<!--CSS Stylesheet-->
+	<link rel = "stylesheet" type = "text/css" href = "{{url_for('static',filename='styles78.css')}}">
+</head>
+
 <body>
+	<!--Login Bar-->
+	<div class='bar'>
+		<div class='flash'>
+			{% with messages = get_flashed_messages() %}
 
-<a href="{{url_for('index')}}">View All Bands</a>
+			<ul>
+				{% if messages %}
+				{% for message in messages %}
+				<li><strong>{{message}}</strong></li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+			{% endwith %}
+		</div>
+		<a class='btn' href="{{url_for('showlogin')}}">Log In</a>
+		<a class='btn' href="{{url_for('index')}}">View All Bands</a>
+	</div>
 
-<h1>{{b.name}}</h1>
-<br/>
-<br/>
+	<div class='banner'>
+		<p>Spinz</p>
+		<img src="/static/36315_1.png" alt = "vinyl-logo">
+	</div>
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
+	<!--Show albums that have been added by other users.
+		Doesn't show option to add a new album-->
+	<div class = 'content'>
+		<div class = 'column2'>
 
-<ul>
-{% for message in messages %}
-  <li><strong>{{message}}</strong></li>
-  {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
+			<p>Band Added by
+				<img src="{{creator.picture}}" style = "width: 40px; height: 40px; border-radius: 20px;-webkit-border-radius: 20px;-moz-border-radius: 20px;">
+			</p>
+		</div>
+		<div class='column1'>
 
+			<h1>{{b.name}}</h1>
 
-{% for a in albums %}
+			{% for a in albums %}
 
-<div>
+			<a class = 'btn' href="{{url_for('showAlbum',band_id=b.id,alb_id=a.id)}}">{{a.name}}</a><br/><br/>
 
-<a href="{{url_for('showAlbum',band_id=b.id,alb_id=a.id)}}">{{a.name}}</a><br/>
-
-<img src="{{a.artwork}}" alt="{{a.name}}" width = "300px">
-
-
-<br/>
-<br/>
-
-</div>
+			<img src="{{a.artwork}}" alt="{{a.name}}" width = "300px">
 
 
-{% endfor %}
+			<br/>
+			<br/>
+
+
+			{% endfor %}
+
+		</div>
+	</div>
 </body>
 
 </html>

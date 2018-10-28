@@ -1,15 +1,23 @@
 <html>
+<head>
+	<!--CSS Stylesheet-->
+	<link rel = "stylesheet" type = "text/css" href = "{{url_for('static',filename='styles78.css')}}">
+</head>
 <body>
-<h1> {{band.name}} </h1>
-<p>Are you sure you want to delete this band?</p>
 
-<form action="{{url_for('deleteBand',id=band.id)}}" method = 'POST'>
+	<!--Form for confirming deletion request-->
+	<div class = 'form'>
+		<br/>
+		<h1> {{band.name}} </h1>
+		<p>Are you sure you want to delete this band?</p>
+		<br/>
+		<form action="{{url_for('deleteBand',id=band.id)}}" method = 'POST'>
 
-<input type='submit' value='Delete'>
+			<input type='submit' value='Delete'>
+			<br/><br/>
+			<a href="{{url_for('index')}}">Back</a>
 
-<a href="{{url_for('index')}}">Back</a>
+		</form>
 
-</form>
-
-</body>
-</html>
+	</body>
+	</html>
