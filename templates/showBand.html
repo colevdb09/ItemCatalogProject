@@ -1,50 +1,83 @@
 <html>
 
+<head>
+	<!--CSS Stylesheet-->
+	<link rel = "stylesheet" type = "text/css" href = "{{url_for('static',filename='styles75.css')}}">
+</head>
+
 <body>
+	<!--Log Out-->
+	<div class='bar'>
+		<div class='flash'>
+			{% with messages = get_flashed_messages() %}
 
-<a href="{{url_for('index')}}">View All Bands</a>
+			<ul>
+				{% if messages %}
+				{% for message in messages %}
+				<li><strong>{{message}}</strong></li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+			{% endwith %}
+		</div>
+		<a class='btn' href="{{url_for('gdisconnect')}}">Log Out</a>
+		<a class='btn' href="{{url_for('index')}}">View All Bands</a>
 
-<h1>{{b.name}}</h1>
-<a href="{{url_for('newAlbum',id=b.id)}}">Add a New Album</a>
-<br/>
-<br/>
+	</div>
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
+	<div class='banner'>
+		<p>Spinz</p>
+		<img src="/static/36315_1.png" alt = "vinyl-logo">
+	</div>
 
-<ul>
-{% for message in messages %}
-  <li><strong>{{message}}</strong></li>
-  {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
+	<!--Band Info-->
+	<div class = 'content'>
+		<div class = 'column2'>
 
+			<p>Band Added by
+				<img src="{{creator.picture}}" style = "width: 40px; height: 40px; border-radius: 20px;-webkit-border-radius: 20px;-moz-border-radius: 20px;">
+			</p>
+			<br/>
 
-{% for a in albums %}
+			<a class='btn' href="{{url_for('newAlbum',id=b.id)}}">Add a New Album</a>
+			<br/>
+			<br/>
 
-<div>
+		</div>
+		
+		<!--List of albums-->
+		<div class='column1'>
+			<h1>{{b.name}}</h1>
 
-<a href="{{url_for('showAlbum',band_id=b.id,alb_id=a.id)}}">{{a.name}}</a><br/>
+			{% for a in albums %}
 
-<img src="{{a.artwork}}" alt="{{a.name}}" width = "300px">
+			<div>
 
-<br/>
-
-{% if a.user_id == user_id %}
-
-<a href="{{url_for('editAlbum',band_id=b.id,alb_id=a.id)}}">Edit</a>
-<a href="{{url_for('deleteAlbum',band_id=b.id,alb_id=a.id)}}">Delete</a>
-
-{% endif %}
-
-<br/>
-<br/>
-
-</div>
+				<a class = 'btn' href="{{url_for('showAlbum',band_id=b.id,alb_id=a.id)}}">{{a.name}}</a><br/><br/>
 
 
-{% endfor %}
+				<img src="{{a.artwork}}" alt="{{a.name}}" width = "300px">
+
+				<br/>
+				<br/>
+
+				{% if a.user_id == user_id %}
+
+				<a class = 'btn' href="{{url_for('editAlbum',band_id=b.id,alb_id=a.id)}}">Edit</a>
+				<a class = 'btn' href="{{url_for('deleteAlbum',band_id=b.id,alb_id=a.id)}}">Delete</a>
+				<br/>
+				<br/>
+				{% endif %}
+
+				<br/>
+				<br/>
+
+			</div>
+
+
+			{% endfor %}
+		</div>
+	</div>
 </body>
 
 </html>

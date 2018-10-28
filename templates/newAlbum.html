@@ -1,34 +1,48 @@
 <html>
+<head>
+	<!--CSS Stylesheet-->
+	<link rel = "stylesheet" type = "text/css" href = "{{url_for('static',filename='styles78.css')}}">
+</head>
 <body>
-<h1> New Album </h1>
+	<!--Form for adding new album to database-->
+	<div class='form'>
 
-<form action="{{url_for('newAlbum',id=band_id)}}" method = 'POST'>
+		<br/>
 
-<p>Album Name:</p>
+		<img src="/static/36315_1.png" alt = "vinyl-logo">
 
-<input type='text' size='30' name='name'>
+		<h1> New Album </h1>
 
-<br/>
+		<form action="{{url_for('newAlbum',id=band_id)}}" method = 'POST'>
 
-<p>Artwork:</p>
+			<p>Album Name:</p>
 
-<input type='text' size='50' name='artwork'>
+			<input type='text' size='30' name='name'>
 
-<br/>
+			<br/>
 
-<p>Favorite Song:</p>
+			<p>Artwork:</p>
 
-<input type='text' size='30' name='fav_song'>
+			<input type='text' size='50' name='artwork'>
 
-<br/>
+			<br/>
 
-<p>Release Year:</p>
+			<p>Favorite Song:</p>
 
-<input type='text' size='4' name='year'>
+			<input type='text' size='30' name='fav_song'>
 
-<input type='submit' value='Add New Album'>
+			<br/>
 
-</form>
+			<p>Release Year:</p>
+
+			<input type='text' size='4' name='year'>
+			<br/><br/>
+
+
+			<input type='submit' value='Add New Album'>
+
+		</form>
+	</div>
 
 </body>
 </html>

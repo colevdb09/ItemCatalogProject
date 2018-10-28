@@ -1,3 +1,4 @@
+# Import sqlAlchemy ORM classes and methods
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -7,6 +8,7 @@ from passlib.apps import custom_app_context as pwd_context
 
 Base = declarative_base()
 
+# Create a user object. 
 class User(Base):
 	
     __tablename__ = 'user'
@@ -15,14 +17,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String(100), nullable=False)
     picture = Column(String(250))
-    password_hash = Column(String(64))
 
-    def hash_password(self, password):
-        self.password_hash = pwd_context.encrypt(password)
-
-    def verify_password(self, password):
-        return pwd_context.verify(password, self.password_hash)
-
+# Create a band class with a lookup to the user
 class Band(Base):
 
 	__tablename__ = 'band'
@@ -33,6 +29,7 @@ class Band(Base):
 	user_id = Column(Integer,ForeignKey('user.id'))
 	user = relationship(User)
 
+	# Serialized for JSON endpoints
 	@property
 	def serialize(self):
 		return{
@@ -42,6 +39,7 @@ class Band(Base):
 			'user':self.user_id
 		}
 
+# Create an album class with lookups to the user class and band class
 class Album(Base):
 
 	__tablename__ = 'album'
@@ -56,6 +54,7 @@ class Album(Base):
 	user_id = Column(Integer,ForeignKey('user.id'))
 	user = relationship(User)
 
+	# Serialized for JSON endpoints
 	@property
 	def serialize(self):
 		return{

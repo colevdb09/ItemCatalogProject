@@ -1,39 +1,53 @@
 <html>
 
+<head>
+	<!--CSS Stylesheet-->
+	<link rel = "stylesheet" type = "text/css" href = "{{url_for('static',filename='styles78.css')}}">
+</head>
+
 <body>
+	<!--Bar with login button displayed-->
+	<div class='bar'>
+		<div class='flash'>
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
 
-<a href="{{url_for('showlogin')}}">Log In</a>
+			<ul>
+				{% for message in messages %}
+				<li><strong>{{message}}</strong></li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+			{% endwith %}
+		</div>
+		<a class='btn' href="{{url_for('showlogin')}}">Log In</a>
+	</div>
 
-<h1>Bands</h1>
+	<div class='banner'>
+		<p>Spinz</p>
+		<img src="/static/36315_1.png" alt = "vinyl-logo">
+	</div>
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
+	<!--Show all bands in database. No option to edit band or add band-->
+	<div class='content'>
 
-<ul>
-{% for message in messages %}
-  <li><strong>{{message}}</strong></li>
-  {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
-
-
-{% for b in bands %}
-
-<div>
-<br/>
-<a href="{{url_for('showBand',id=b.id)}}">{{b.name}}</a>
-<br/>
-<img src="{{b.photo}}" alt="{{b.name}}" width = "300px">
-
-<br/>
-<br/>
-
-
-</div>
+		<h1>Bands</h1>
 
 
-{% endfor %}
+		{% for b in bands %}
+
+		<div class='item'>
+			<br/>
+			<a href="{{url_for('showBand',id=b.id)}}">{{b.name}}</a>
+			<br/>
+			<div class='frame'>
+				<img src="{{b.photo}}" alt="{{b.name}}" width = "200px">
+			</div>
+		</div>
+
+
+		{% endfor %}
+	</div>
 </body>
 
 </html>
