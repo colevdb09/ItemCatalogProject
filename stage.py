@@ -264,8 +264,8 @@ def showBand(id):
                                user_id=login_session['user_id'],
                                creator=creator)
     else:
-        return render_template('publicshowBand.html\
-            ', b=band, albums=albums, creator=creator)
+        return render_template(
+            'publicshowBand.html', b=band, albums=albums, creator=creator)
 
 
 # JSON endpoint describing algsbums from a particular band
